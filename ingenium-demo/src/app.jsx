@@ -296,6 +296,7 @@ function SplashScreen({ lang, setLang, onContinue }) {
     </div>
   );
 }
+
 function LoginScreen({ lang, setLang, onLogin }) {
   const [isUp, setIsUp] = useState(false);
   const [form, setForm] = useState({ name:"", email:"", password:"", university:"" });
@@ -429,7 +430,6 @@ function ResilienceHub({ user, lang, setLang, onBack, resilienceScore, setResili
 
   const rd           = result;
   const userMsgCount = messages.filter(m=>m.role==="user").length;
-  const coachingDone = userMsgCount >= 3;
 
   useEffect(()=>{ if(chatEndRef.current) chatEndRef.current.scrollIntoView({behavior:"smooth"}); },[messages]);
   useEffect(()=>{ if(userMsgCount>=3 && !badgesEarned.coaching) setBadgesEarned(b=>({...b,coaching:true})); },[userMsgCount]);
@@ -448,13 +448,6 @@ function ResilienceHub({ user, lang, setLang, onBack, resilienceScore, setResili
     setResult(computed); setResilienceScore(computed); setBadgesEarned(b=>({...b,assessment:true})); setTab("results");
   };
 
-  const buildPrompt = () => {
-    const sc=rd?"Resilience: "+rd.pct+"/100 ("+getTier(rd.pct).label+")":"Assessment not yet completed";
-    const sk=rd?Object.entries(rd.skills).map(([k,v])=>k+": "+v).join(", "):"";
-    if(lang==="en") return "You are a warm expert coach for the Resilience pillar of Ingenium's Character Aarc program. Resilience asks: What sustains me through difficulty? Tagline: Resilience is not bouncing back - it is growing forward. Student score: "+sc+(sk?". Skills: "+sk:"")+". Scores are for self-reflection only and never tied to credentials. Score tiers: Development Opportunity (0-29), Below Average (30-54), Above Average (55-74), Leadership (75-89), Outlier (90-100). For Outlier scores gently invite reflection. SMART Goal Coaching: When asked, guide step-by-step through Specific, Measurable, Achievable, Relevant, Time-bound - one question at a time. Be concise (3-4 sentences), warm, practical.";
-    return "Eres coach del pilar Resiliencia del programa Character Aarc de Ingenium. Puntaje: "+sc+(sk?". Habilidades: "+sk:"")+". Para metas SMART guia paso a paso. Se conciso, calido y practico.";
-  };
-
   const openCoach = () => {
     if(messages.length===0){
       const sc=rd?"Your score is "+rd.pct+"/100 ("+getTier(rd.pct).label+") - a starting point for reflection, not a grade.":"Complete the assessment first for personalised insights!";
@@ -471,10 +464,23 @@ function ResilienceHub({ user, lang, setLang, onBack, resilienceScore, setResili
     const next=[...messages,um];
     setMessages(next); setChatInput(""); setChatLoading(true);
     try {
-      const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,system:buildPrompt(),messages:next.map(m=>({role:m.role,content:m.content}))})});
-      const data=await res.json();
-      if(!res.ok) setMessages([...next,{role:"assistant",content:"Error: "+(data?.error?.message||"Could not connect")}]);
-      else setMessages([...next,{role:"assistant",content:data.content?data.content.map(b=>b.text||"").join(""):"..."}]);
+      // 🧠 FIXED: Routes your conversation securely through your internal Vercel API backend path
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pillarKey: "Resilience",
+          currentScores: rd,
+          messages: next.map(m => ({ role: m.role, content: m.content })),
+          lang
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setMessages([...next, { role: "assistant", content: "Service Error: " + (data.error || "Failed to parse system text stream.") }]);
+      } else {
+        setMessages([...next, { role: "assistant", content: data.content || "..." }]);
+      }
     } catch(e){ setMessages([...next,{role:"assistant",content:"Network error: "+e.message}]); }
     setChatLoading(false);
   };
@@ -615,7 +621,9 @@ function ResilienceHub({ user, lang, setLang, onBack, resilienceScore, setResili
                 <div style={{ fontSize:12, color:"#999" }}>{answered} {lang==="en"?"of":"de"} {shuffled.length} {lang==="en"?"answered":"respondidas"}</div>
                 <div style={{ fontSize:20, fontWeight:700, color:RC }}>{progPct}%</div>
               </div>
-              <Bar pct={progPct} h={7} />
+              <div style={{ height:7, background:"#f0e8e8", borderRadius:7, overflow:"hidden" }}>
+                <div style={{ width:progPct+"%", height:"100%", background:GRAD, borderRadius:7, transition:"width .6s" }} />
+              </div>
             </div>
             <div key={currentQ} style={{ ...card, border:"1px solid "+RC+"28" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
@@ -632,7 +640,8 @@ function ResilienceHub({ user, lang, setLang, onBack, resilienceScore, setResili
               </div>
             </div>
             <div style={{ display:"flex", gap:10 }}>
-              <button style={{ ...btnOut, opacity:currentQ===0?.4:1 }} onClick={()=>currentQ>0&&setCurrentQ(q=>q-1)}>← {lang==="en"?"Prev":"Ant."}</button>
+              {/* 🧠 FIXED: Clean arithmetic spacing prevents modern cloud bundler compilation crash */}
+              <button style={{ ...btnOut, opacity: currentQ === 0 ? 0.4 : 1 }} onClick={()=>currentQ>0&&setCurrentQ(q=>q-1)}>← {lang==="en"?"Prev":"Ant."}</button>
               <button style={btnOut} onClick={()=>setTab("overview")}>{lang==="en"?"Save & Exit":"Guardar"}</button>
               {currentQ<shuffled.length-1
                 ?<button style={btnSm} onClick={()=>setCurrentQ(q=>q+1)}>{lang==="en"?"Next":"Sig."} →</button>
