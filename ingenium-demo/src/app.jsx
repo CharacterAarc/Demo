@@ -74,15 +74,16 @@ const ALL_PILLARS = [
 
 const USER_STORE = {};
 
-const RC   = "#1a35d4"; // Swapped palette identity variable over to Agency Indigo
-const GRAD = "linear-gradient(135deg,#1a35d4,#0a1b80)";
-
+// 🟪🟦 Premium Brand Palette Overhauls
+const RC   = "#1a35d4"; 
+const GRAD = "linear-gradient(135deg,#1a35d4,#4a1a8a,#b026d4)";
 const PLUM   = "#b026d4";
 const INDIGO = "#1a35d4";
 const BRAND_GRAD = "linear-gradient(135deg,#b026d4,#1a35d4)";
 const BRAND_DARK_BG = "linear-gradient(150deg,#07071a 0%,#1a0530 45%,#2a0a6e 100%)";
 
-const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+// 🌟 THE FONT ASSIGNMENT CONSTANT: Updated to utilize Plus Jakarta Sans
+const FONT = "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif";
 
 const getTier  = pct => TIERS.find(t => pct >= t.min && pct <= t.max) || TIERS[0];
 const shuffle  = a => [...a].sort(() => Math.random() - 0.5);
@@ -94,7 +95,10 @@ const getVerCode = (name, university) => {
   return "CA-AGE-" + Math.abs(hash).toString(36).toUpperCase().slice(0, 6);
 };
 
+// 🕸️ Dynamic online font fetching rule injected directly at top of CSS engine
 const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
   @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   @keyframes popIn  { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
   @keyframes pulse  { 0%,100%{opacity:.35;transform:scale(.75)} 50%{opacity:1;transform:scale(1)} }
@@ -123,7 +127,7 @@ function TierBadge({ pct, lang, showNote }) {
 function Bar({ pct, h, color }) {
   const ht = h || 6;
   const c = color || RC;
-  const grad = c === RC ? GRAD : "linear-gradient(90deg,"+c+","+c+"aa)";
+  const grad = "linear-gradient(90deg,"+c+","+c+"aa)";
   return (
     <div style={{ height:ht, background:"#f0e8e8", borderRadius:ht, overflow:"hidden" }}>
       <div style={{ width:pct+"%", height:"100%", background:grad, borderRadius:ht, transition:"width .6s" }} />
@@ -131,7 +135,7 @@ function Bar({ pct, h, color }) {
   );
 }
 
-// ── Certificate (Agency-specific structural formatting) ─────────────────────
+// ── Certificate ───────────────────────────────────────────────────────────────
 function Certificate({ user, result, lang, onClose }) {
   const verCode = getVerCode(user.name, user.university);
   const dateStr = new Date().toLocaleDateString("en-US", { year:"numeric", month:"long", day:"numeric" });
@@ -141,16 +145,16 @@ function Certificate({ user, result, lang, onClose }) {
     <div style={{ position:"fixed", inset:0, background:"rgba(7,7,26,.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:300, backdropFilter:"blur(6px)", padding:"20px" }} onClick={onClose}>
       <div onClick={e=>e.stopPropagation()} style={{ background:"#fff", borderRadius:16, maxWidth:620, width:"100%", maxHeight:"90vh", overflowY:"auto", boxShadow:"0 30px 80px rgba(0,0,0,.45)", display:"flex", flexDirection:"column" }}>
         <div id="cert" style={{ padding:"44px 52px", background:"#fff", position:"relative", overflow:"hidden", fontFamily:FONT }}>
-          <div style={{ position:"absolute", top:0, left:0, right:0, height:6, background:GRAD }} />
+          <div style={{ position:"absolute", top:0, left:0, right:0, height:6, background:BRAND_GRAD }} />
           <div style={{ position:"absolute", right:-60, bottom:-60, width:240, height:240, borderRadius:"50%", background:RC+"06", pointerEvents:"none" }} />
           <div style={{ position:"absolute", right:-20, bottom:-20, width:140, height:140, borderRadius:"50%", background:RC+"08", pointerEvents:"none" }} />
 
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:36 }}>
             <div>
-              <div style={{ fontSize:9, letterSpacing:5, color:RC, textTransform:"uppercase", marginBottom:2 }}>Character Aarc</div>
+              <div style={{ fontSize:9, letterSpacing:5, color:INDIGO, textTransform:"uppercase", marginBottom:2 }}>Character Aarc</div>
               <div style={{ fontSize:9, letterSpacing:2, color:"#aaa", textTransform:"uppercase" }}>by Ingenium</div>
             </div>
-            <Zap size={30} color={RC} />
+            <Zap size={30} color={INDIGO} />
           </div>
 
           <div style={{ textAlign:"center", marginBottom:32 }}>
@@ -158,13 +162,13 @@ function Certificate({ user, result, lang, onClose }) {
             <div style={{ fontSize:13, color:"#888", marginBottom:10, fontStyle:"italic" }}>This is to certify that</div>
             <div style={{ fontSize:34, fontWeight:700, color:"#07071a", marginBottom:4, letterSpacing:.5 }}>{user.name}</div>
             <div style={{ fontSize:13, color:"#888", marginBottom:24 }}>{user.university}</div>
-            <div style={{ width:64, height:1.5, background:"linear-gradient(90deg,transparent,"+RC+",transparent)", margin:"0 auto 24px" }} />
+            <div style={{ width:64, height:1.5, background:"linear-gradient(90deg,transparent,"+INDIGO+",transparent)", margin:"0 auto 24px" }} />
             <div style={{ fontSize:13, color:"#555", marginBottom:6 }}>has successfully completed the</div>
-            <div style={{ fontSize:26, fontWeight:700, color:RC, marginBottom:4 }}>Agency Pillar</div>
+            <div style={{ fontSize:26, fontWeight:700, color:INDIGO, marginBottom:4 }}>Agency Pillar</div>
             <div style={{ fontSize:13, color:"#555", marginBottom:24, lineHeight:1.7 }}>of the Character Aarc Human Skills Development Program,<br/>demonstrating independent commitment to career readiness and tactical goal structures.</div>
 
             <div style={{ display:"flex", justifyContent:"center", gap:7, flexWrap:"wrap", marginBottom:24 }}>
-              {SKILLS.map(sk => <div key={sk} style={{ fontSize:11, padding:"4px 12px", borderRadius:20, background:RC+"0e", color:RC, border:"1px solid "+RC+"28", fontWeight:600 }}>{sk}</div>)}
+              {SKILLS.map(sk => <div key={sk} style={{ fontSize:11, padding:"4px 12px", borderRadius:20, background:INDIGO+"0e", color:INDIGO, border:"1px solid "+INDIGO+"28", fontWeight:600 }}>{sk}</div>)}
             </div>
 
             <div style={{ display:"inline-flex", alignItems:"center", gap:10, padding:"12px 22px", borderRadius:12, background:"#f4f1fc", border:"1px solid #dbd4f0" }}>
@@ -191,14 +195,14 @@ function Certificate({ user, result, lang, onClose }) {
           <div style={{ textAlign:"center", marginTop:18 }}>
             <div style={{ fontSize:10, color:"#ccc", letterSpacing:1 }}>Verification ID: {verCode}</div>
           </div>
-          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:4, background:GRAD }} />
+          <div style={{ position:"absolute", bottom:0, left:0, right:0, height:4, background:BRAND_GRAD }} />
         </div>
 
         <div style={{ padding:"16px 20px", borderTop:"1px solid #f0e8e8", display:"flex", gap:10 }}>
-          <button onClick={handlePrint} style={{ fontFamily:FONT, background:GRAD, color:"#fff", border:"none", borderRadius:10, padding:"11px 24px", cursor:"pointer", fontSize:13, fontWeight:700, flex:2, boxShadow:"0 4px 14px rgba(26,53,212,.3)" }}>
+          <button onClick={handlePrint} style={{ fontFamily:FONT, background:BRAND_GRAD, color:"#fff", border:"none", borderRadius:10, padding:"11px 24px", cursor:"pointer", fontSize:13, fontWeight:700, flex:2, boxShadow:"0 4px 14px rgba(26,53,212,.3)" }}>
             {lang==="en"?"Save as PDF / Print":"Guardar como PDF / Imprimir"}
           </button>
-          <button onClick={onClose} style={{ fontFamily:FONT, background:"transparent", color:RC, border:"2px solid "+RC, borderRadius:10, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:700, flex:1 }}>
+          <button onClick={onClose} style={{ fontFamily:FONT, background:"transparent", color:INDIGO, border:"2px solid "+INDIGO, borderRadius:10, padding:"11px 18px", cursor:"pointer", fontSize:13, fontWeight:700, flex:1 }}>
             {lang==="en"?"Close":"Cerrar"}
           </button>
         </div>
@@ -217,7 +221,7 @@ function SplashScreen({ lang, setLang, onContinue }) {
 
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"20px "+(mobile?18:36)+"px", position:"relative", zIndex:1 }}>
         <div style={{ minWidth:0 }}>
-          <div style={{ display:"inline-block", fontSize:mobile?14:16, fontWeight:700, letterSpacing:3, paddingLeft:3, paddingRight:3, background:BRAND_GRAD, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Ingenium</div>
+          <div style={{ display:"inline-block", fontSize:mobile?14:16, fontWeight:800, letterSpacing:3, paddingLeft:3, paddingRight:3, background:BRAND_GRAD, WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent" }}>Ingenium</div>
           <div style={{ fontSize:9, color:"rgba(255,255,255,.45)", letterSpacing:2, paddingLeft:3, whiteSpace:"nowrap" }}>Character Aarc</div>
         </div>
         <button onClick={()=>setLang(l=>l==="en"?"es":"en")} style={{ fontFamily:FONT, background:"rgba(255,255,255,.08)", border:"1px solid rgba(255,255,255,.15)", borderRadius:20, padding:"5px 14px", cursor:"pointer", fontSize:12, color:"rgba(255,255,255,.7)", flexShrink:0, marginLeft:10 }}>
@@ -230,7 +234,7 @@ function SplashScreen({ lang, setLang, onContinue }) {
           <div style={{ display:"inline-block", fontSize:11, letterSpacing:4, color:PLUM, textTransform:"uppercase", padding:"6px 18px", borderRadius:20, border:"1px solid "+PLUM+"50", background:PLUM+"12", marginBottom:20 }}>
             {lang==="en"?"For University Engineering Students":"Para Estudiantes de Ingenieria Universitaria"}
           </div>
-          <div style={{ fontSize:mobile?28:44, fontWeight:700, lineHeight:1.2, marginBottom:16, maxWidth:680 }}>
+          <div style={{ fontSize:mobile?28:44, fontWeight:800, lineHeight:1.2, marginBottom:16, maxWidth:680 }}>
             {lang==="en" ? "Take command of your professional path." : "Toma el control de tu camino profesional."}
           </div>
           <div style={{ fontSize:mobile?14:16, color:"rgba(255,255,255,.65)", lineHeight:1.8, maxWidth:540, marginBottom:32 }}>
@@ -395,7 +399,7 @@ function DashboardScreen({ user, lang, setLang, agencyScore, badgesEarned, onEnt
   );
 }
 
-// ── Agency Hub (Pillar Hub container refactored for Agency tracking metrics) ──
+// ── Agency Hub (Pillar-Specific content mapped explicitly to Indigo/Plum elements) ──
 function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, badgesEarned, setBadgesEarned }) {
   const [tab, setTab]             = useState("overview");
   const [shuffled, setShuffled]   = useState([]);
@@ -446,7 +450,7 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
     const next=[...messages,um];
     setMessages(next); setChatInput(""); setChatLoading(true);
     try {
-      // 🧠 FIXED: Securely triggers your cloud-wrapping relative path route instead of Anthropic direct endpoints
+      // 🧠 FIXED: Routes chat packets securely to your serverless backend
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -474,7 +478,7 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
     ? (lang==="en" ? ["Map out an Agency SMART goal","Break down my baseline score","How do I improve accountability?"] : ["Ayudame con una meta SMART","Analiza mi puntaje","Como mejoro mi iniciativa?"])
     : (lang==="en" ? ["Tell me about Agency","Why does this pillar matter?","What should I expect?"]       : ["Cuentame sobre Agencia","Por que importa este pilar?","Que debo esperar?"]);
 
-  const card ={background:"#fff",borderRadius:18,padding:mobile?18:26,marginBottom:16,border:"1px solid #e2e8f0",boxShadow:"0 2px 16px rgba(26,53,212,.03)"};
+  const card ={background:"#fff",borderRadius:18,padding:mobile?18:26,marginBottom:16,border:"1px solid #cbd5e1",boxShadow:"0 2px 16px rgba(26,53,212,.03)"};
   const btnPri={fontFamily:FONT,background:GRAD,color:"#fff",border:"none",borderRadius:12,padding:"13px 22px",cursor:"pointer",fontSize:14,fontWeight:700,width:"100%",boxShadow:"0 4px 16px rgba(26,53,212,.2)"};
   const btnOut={fontFamily:FONT,background:"transparent",color:RC,border:"2px solid "+RC,borderRadius:10,padding:"9px 18px",cursor:"pointer",fontSize:13,fontWeight:700};
   const btnSm ={fontFamily:FONT,background:GRAD,color:"#fff",border:"none",borderRadius:9,padding:"10px 18px",cursor:"pointer",fontSize:13,fontWeight:700};
@@ -727,7 +731,7 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
                   <FileText size={30} color="#fff" style={{ flexShrink:0 }} />
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:15, fontWeight:700, color:"#fff", marginBottom:4 }}>{lang==="en"?"Agency Certificate of Milestone Action","Certificado de Agencia"}</div>
-                    <div style={{ fontSize:12, color:"rgba(255,255,255,.8)", lineHeight:1.6 }}>{lang==="en"?"Your personalized diagnostic document has compiled successfully.","Tu documento personalizado esta listo para descarga."}</div>
+                    <div style={{ fontSize:12, color:"rgba(255,255,255,.8)", lineHeight:1.6 }}>{lang==="en"?"Your personalized diagnostic document has compiled successfully.":"Tu documento personalizado esta listo para descarga."}</div>
                   </div>
                   <button onClick={()=>setShowCert(true)} style={{ fontFamily:FONT, background:"rgba(255,255,255,.2)", color:"#fff", border:"1.5px solid rgba(255,255,255,.4)", borderRadius:10, padding:"10px 18px", cursor:"pointer", fontSize:13, fontWeight:700, whiteSpace:"nowrap" }}>
                     {lang==="en"?"View Document","Ver Documento"}
@@ -741,6 +745,25 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
                 <div style={{ fontSize:12, color:"#bbb" }}>{lang==="en"?"Complete the baseline diagnostic matrix to compile.","Completa la evaluacion diagnostica para desbloquear."}</div>
               </div>
             )}
+            
+            <div style={{ ...card, background:"linear-gradient(135deg,"+RC+"06,#fff)", marginTop:12 }}>
+              <div style={{ fontSize:14, fontWeight:700, color:"#07071a", marginBottom:4 }}>{lang==="en"?"NACE Career Readiness Competency":"Competencia de Preparacion Profesional NACE"}</div>
+              <div style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 18px", borderRadius:14, background:rd?"linear-gradient(135deg,"+RC+"0e,#fff)":"#f4f1fc", border:rd?"1px solid "+RC+"30":"1px solid #dbd4f0", marginTop:10 }}>
+                <Award size={28} color={rd?RC:"#ccc"} style={{ flexShrink:0 }} />
+                <div style={{ flex:1 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:rd?RC:"#aaa", display:"inline-block", padding:"4px 13px", borderRadius:20, background:rd?RC+"14":"#ebebeb", border:"1px solid "+(rd?RC+"30":"#ddd") }}>Professionalism{rd?" - earned":""}</div>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ padding:"18px 20px", borderRadius:16, background:"#f4f1fc", border:"1px solid #dbd4f0", display:"flex", alignItems:"center", gap:16, marginTop:12 }}>
+              <GraduationCap size={30} color="#c8c0e8" style={{ flexShrink:0 }} />
+              <div style={{ flex:1 }}>
+                <div style={{ fontSize:14, fontWeight:700, color:"#aaa", marginBottom:3 }}>Career & Self Development</div>
+                <div style={{ fontSize:12, color:"#bbb", marginBottom:4, lineHeight:1.6 }}>{lang==="en"?"The overarching NACE competency - awarded when all four AARC pillars are complete.":"La competencia NACE global."}</div>
+                <div style={{ fontSize:11, color:"#bbb", fontStyle:"italic" }}>{lang==="en"?"Demo: 1/4 pillars available":"Demo: 1/4 pilares disponibles"}</div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -755,11 +778,11 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
 
 // ── Root ──────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [lang, setLang]                       = useState("en");
-  const [page, setPage]                       = useState("splash");
-  const [user, setUser]                       = useState(null);
-  const [agencyScore, setAgencyScore]         = useState(null);
-  const [badgesEarned, setBadgesEarned]       = useState({ assessment:false, coaching:false, goal:false });
+  const [lang, setLang]                 = useState("en");
+  const [page, setPage]                 = useState("splash");
+  const [user, setUser]                 = useState(null);
+  const [agencyScore, setAgencyScore]   = useState(null);
+  const [badgesEarned, setBadgesEarned] = useState({ assessment:false, coaching:false, goal:false });
 
   const handleLogin = (form, isUp) => {
     if (!form.email || !form.password) return;
