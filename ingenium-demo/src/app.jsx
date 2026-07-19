@@ -643,7 +643,7 @@ function AgencyHub({ user, lang, setLang, onBack, agencyScore, setAgencyScore, b
                 <div key={sk} style={{ marginBottom:14 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
                     <span style={{ fontSize:13, fontWeight:600 }}>{sk}</span>
-                    <div style={{ display:"flex", alignItems:"center", gap:8 }}><TierBadge pct={pct} lang={lang} /><span style={{ fontSize:14, fontWeight={700} color:RC }}>{pct}</span></div>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}><TierBadge pct={pct} lang={lang} /><span style={{ fontSize:14, fontWeight:700, color:RC }}>{pct}</span></div>
                   </div>
                   <Bar pct={pct} h={6} color={RC} />
                 </div>
